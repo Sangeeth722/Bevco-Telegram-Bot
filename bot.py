@@ -3,6 +3,18 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 import sqlite3
 import os
 from dotenv import load_dotenv
+#Dummy for render 
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), BaseHTTPRequestHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_dummy_server).start()
+
+
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
@@ -57,5 +69,8 @@ async def search(update: Update, context):
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler('start', start))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, search))
+
+# start dummy server
+threading.Thread(target=run_dummy_server).start()
 
 app.run_polling()
